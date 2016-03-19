@@ -1,0 +1,6 @@
+To use this tool use linux and install the following programs:
+[+] reaver [ https:/github.com/t6x/reaver-wps-fork-t6x ]
+[+] MDK3_v6 [https:/github.com/lxj616/mdk3-v6 ]
+[+] aircrack
+[+] airmon-ng
+[+] airodump-ng
