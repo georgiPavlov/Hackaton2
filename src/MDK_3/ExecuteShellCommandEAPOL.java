@@ -1,4 +1,7 @@
 package MDK_3;
+import processes.ProcessHandler;
+import processes.RunningProcess;
+
 import java.io.*;
 import java.lang.reflect.Field;
 
@@ -12,7 +15,7 @@ public class ExecuteShellCommandEAPOL implements Runnable {
     private long waitTime;
     private long howManyMinutes;
 
-    public String executeCommand(String command) {
+    public void executeCommand(String command) {
         StringBuffer output=null;
         Process p = null;
         try {
@@ -30,7 +33,7 @@ public class ExecuteShellCommandEAPOL implements Runnable {
 
                 String line;
 
-                while (true) {
+                /*while (true) {
                     line = reader.readLine();
                     System.out.println("---------------------");
                     System.out.println("T2");
@@ -41,7 +44,8 @@ public class ExecuteShellCommandEAPOL implements Runnable {
                         System.out.println("stop...");
                         break;
                     }
-                }/*
+                }*/
+            /*
            // p.destroy();
             BufferedWriter in =
                     new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
@@ -54,9 +58,16 @@ public class ExecuteShellCommandEAPOL implements Runnable {
                 Process p2 = Runtime.getRuntime().exec("sudo -TSTP  kill " + pid);
                 p2.waitFor();
                 synchronized(this){
-                    System.out.println("i am waiting");
+                   // System.out.println("i am waiting");
                     this.wait(waitTime);}
                 p2 = Runtime.getRuntime().exec("sudo  -CONT kill " + pid);
+                try {
+                    ProcessHandler.killProcess(new RunningProcess(Integer.toString(ProcessHandler.getPid(p2)),null));
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
                 p2.destroy();
 
             } catch (Exception e) {
@@ -64,8 +75,15 @@ public class ExecuteShellCommandEAPOL implements Runnable {
             }
         }
 
-
-        return output.toString();
+       /* try {
+            ProcessHandler.killProcess(new RunningProcess(Integer.toString(ProcessHandler.getPid(p)),null));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        p.destroy();*/
+        return ;
 
     }
 

@@ -16,9 +16,15 @@ import util.Validator;
 
 public class AiroDumpNG {
 	static final String COMMAND = "sudo airodump-ng";
-	static final String DUMP_FILE = System.getProperty("user.dir") + File.pathSeparator +"out_file";
+	static final String DUMPFILE_NAME = "out_file";
+	static final String DUMP_FILE = System.getProperty("user.dir") + File.separatorChar +DUMPFILE_NAME;
 	static final String FILE_DUMP_COMMAND = " --write " + DUMP_FILE;
 	static final String FILE_EXTENSION = "-01.csv";
+	private static File dumFile;
+
+	static{
+		deleteAllFile();
+	}
 	
 	private static String getCleanPath() {
 		ClassLoader classLoader = File.class.getClassLoader();
@@ -27,7 +33,7 @@ public class AiroDumpNG {
 	}
 
 	public static Set<AccessPoint> getAccessPoints(Adapter adapter, long delayMilliseconds) {
-
+		System.out.println(adapter);
 		Scanner sc;
 		try {
 			sc = getMonitorInput(COMMAND + " " + adapter.getInterface() + FILE_DUMP_COMMAND, delayMilliseconds);
@@ -50,7 +56,13 @@ public class AiroDumpNG {
 				result.add(getAccessPoint(line));
 			}
 		}
-	
+	    if(sc != null){
+			sc.close();
+		}
+		//deleteAllFile();
+		//if(dumFile != null){
+		//	dumFile.delete();
+		//}
 		return result;
 	}
 
@@ -59,33 +71,52 @@ public class AiroDumpNG {
 
 		// line = line.replaceAll("( ) +", " ").trim();
 		String[] tokens = line.split(",");
+
 		// make some token cheks
 		String bssid = tokens[0];
 		if (!Validator.validateMac(bssid)) {
 			return null;
 		}
 		String chanel = tokens[3];
-		String enc = tokens[6];
-		String essid = tokens[13];
+		String enc = tokens[9];
+		String essid = null;
 
-		return new AccessPoint(bssid, chanel, enc, essid.toString());
+		if(tokens.length >= 14){
+			essid = tokens[13];
+		}
+
+
+		return new AccessPoint(bssid, chanel, enc, essid);
 	}
 
 	private static Scanner getMonitorInput(String command, long delayMilliseconds) throws FileNotFoundException {
 		ProcessHandler.sedTerminationComandToProcess(ProcessHandler.startProcess(command, delayMilliseconds));
-		File dumFile = new File(DUMP_FILE + FILE_EXTENSION);
+
+		dumFile = new File(DUMP_FILE + FILE_EXTENSION);
 		Scanner sc = new Scanner(dumFile);
+
 		return sc;
 	}
 
+	private static void deleteAllFile(){
+		File dir = new File(System.getProperty("user.dir"));
+		for(File file : dir.listFiles() ){
+			if(file.getName().startsWith(DUMPFILE_NAME)){
+				file.delete();
+			}
+		}
+	}
+
+
 	public static void main(String[] args) {
+		//System.out.println(File.pathSeparator);
 		List<Adapter> adapters = AirMonNG.getAdapters();
 		for (Adapter adapter : adapters) {
 			System.out.println(adapter);
 		}
 		System.out.println(AirMonNG.start(adapters.get(0)));
 		Adapter monitor = AirMonNG.start(adapters.get(0));
-		getAccessPoints(monitor, 10000).forEach(ap -> System.out.println(ap));
+		getAccessPoints(monitor, 20000).forEach(ap -> System.out.println(ap));
 		// System.out.println(getMonitor(monitor,10000));
 	}
 }

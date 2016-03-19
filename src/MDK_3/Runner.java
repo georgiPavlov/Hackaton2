@@ -1,5 +1,7 @@
 package MDK_3;
 
+import util.Connection_WPA;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,18 +22,24 @@ import java.util.concurrent.TimeUnit;
          }
 
         public void startMDK3() {
-            long waitTime = (long) (1000);
-            int howMany =10;
+
+            long start = System.currentTimeMillis();
+            long waitTime =  (1000L);
+            int howMany =2;
             long howManyMinutes = 60000*1;
             ExecutorService pool = Executors.newFixedThreadPool(howMany);
-            pool.execute(new ExecuteShellCommandDDOS(command1,System.currentTimeMillis(),waitTime,howManyMinutes));
-            pool.execute(new ExecuteShellCommandEAPOL(
-                    command2,System.currentTimeMillis(),waitTime,howManyMinutes));
+            for(int i = 0 ; i < howMany; i++) {
+                pool.execute(new ExecuteShellCommandDDOS(command1, System.currentTimeMillis(), waitTime, howManyMinutes));
+                pool.execute(new ExecuteShellCommandEAPOL(
+                        command2, System.currentTimeMillis(), waitTime, howManyMinutes));
+            }
             pool.shutdown();
             try {
-                pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+                pool.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }finally {
+                pool.shutdownNow();
             }
 
         }

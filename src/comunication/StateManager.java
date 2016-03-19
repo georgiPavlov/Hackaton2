@@ -1,8 +1,11 @@
 package comunication;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import MDK_3.Mdk3_manager;
 import accessPoint.AccessPoint;
@@ -32,6 +35,7 @@ public class StateManager implements Runnable {
 						break;
 					}
 					case CRACK: {
+						//System.out.println(crack);
 						initReaver(pakage.getAps(), pakage.getMonitor());
 						break end;
 					}
@@ -41,15 +45,30 @@ public class StateManager implements Runnable {
 					e1.printStackTrace();
 				}
 			}
+			try {
+				gui.sendToOther(new StatePakage(StatePakage.State.RUNING,null,null,null,null));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			end1: while (true) {
 				try {
+
 					StatePakage p = reaverState.startReaver();
+
 					switch (p.getState()) {
 					case BLOKED: {
 						gui.sendToOther(p);
+                        long start = System.currentTimeMillis();
 						// call mkd3
 						mdk3Manager.executeRunner();
-                        gui.sendToOther(new StatePakage(StatePakage.State.RUNING, null, null, null, null));
+						System.err.println("time ----------------------------------------------------------------------------> : " + (System.currentTimeMillis()-start));
+		/*				try {
+            Thread.sleep(60000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+						gui.sendToOther(new StatePakage(StatePakage.State.RUNING, null, null, null, null));
+
 						break;
 					}
 					case FINISHED: {
@@ -67,16 +86,28 @@ public class StateManager implements Runnable {
 	}
 
 	
-	private StatePakage getAccessPoints() {
+	private static StatePakage getAccessPoints() {
 		List<Adapter> adapters = AirMonNG.getAdapters();
+
 		Adapter monitor = AirMonNG.doubleStart(adapters.get(0));
-		List<AccessPoint> accessPoints = new ArrayList<AccessPoint>(AiroDumpNG.getAccessPoints(monitor, 10_000));
+		Set<AccessPoint> set = AiroDumpNG.getAccessPoints(monitor, 10_000);
+		//set.forEach(kur -> System.out.println(kur));
+		List<AccessPoint> accessPoints = new ArrayList<AccessPoint>(set);
+		System.out.println("Sended Access Points");
+		accessPoints.forEach(ap -> System.out.println(ap));
 		return new StatePakage(StatePakage.State.INIT, null, null, monitor, accessPoints);
 	}
 
 	private void initReaver(List<AccessPoint> accessPoints, Adapter monitor) {
 		this.reaverState = new StateProducer(accessPoints, monitor);
 		this.mdk3Manager = new Mdk3_manager(accessPoints, monitor);
+
+	}
+
+	public static void main(String[] args) {
+		System.out.println(File.separatorChar);
+
+		getAccessPoints().getAps().forEach(hui-> System.out.println(hui));
 
 	}
 }

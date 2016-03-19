@@ -17,10 +17,13 @@ public class ProcessHandler {
     }
 	
 	public static void killProcess(RunningProcess process){
-		startProcess(KILL_COMMNAD + " " + process.getPID());
+		startProcess(KILL_COMMNAD + " " + process.getPID(),0L);
 	}
 	
 	public static void killProcesse(List<RunningProcess> processes){
+		if(processes == null ||processes.size() == 0){
+			return;
+		}
 		StringBuilder sb = new StringBuilder(KILL_COMMNAD + " ") ;
 		for(RunningProcess process : processes){
 			sb.append(process.getPID()).append(" ");
@@ -73,6 +76,7 @@ public class ProcessHandler {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 			try {
 				writer.write("^C");
+				writer.flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -95,6 +99,7 @@ public class ProcessHandler {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 		    try {
 				writer.write("^C");
+				writer.flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -122,6 +127,7 @@ public class ProcessHandler {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
 	    try {
 			writer.write("^C");
+			writer.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -132,6 +138,6 @@ public class ProcessHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    //process.destroy();
+	    process.destroy();
 	}
 }

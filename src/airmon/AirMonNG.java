@@ -26,7 +26,7 @@ public final class AirMonNG {
 	}
     
 	public static Adapter doubleStart(Adapter adapter){
-		start(adapter);
+		adapter =start(adapter);
 		return start(adapter);
 	}
 	
@@ -70,21 +70,22 @@ public final class AirMonNG {
 	private static List<RunningProcess> getTroubleRunningProcess(Scanner reader){
     	while (reader.hasNext()) {
     		String line = reader.nextLine();
-    		if(line.startsWith("PID") || line.startsWith("Pid") || line.startsWith("pid")){
+    		if(line.startsWith("PID") || line.startsWith("Pid") || line.startsWith("pid")|| line.startsWith("Interface")){
     			break;
     		}
+
     	}
     	List<RunningProcess> resultSet = new ArrayList<>();
     	while (reader.hasNext()) {
     		String[] tokens = reader.nextLine().replaceAll("[\t]+", "\t").split("\t");
-    		boolean isEmpty = tokens[0].replaceAll("[0-9]", "").equals("");
+    		boolean isEmpty = tokens.length > 0 && !tokens[0].equals("") ? tokens[0].replaceAll("[0-9]", "").equals(""): false;
     		if(tokens.length > 0 && tokens[0].length() > 0&& isEmpty){
     			resultSet.add(new RunningProcess(tokens[0],tokens[1]));
     		}else{
     			break;
     		}
     	}
-    	
+
     	return resultSet;
     }
 	

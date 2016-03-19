@@ -1,5 +1,8 @@
 package MDK_3;
 
+import processes.ProcessHandler;
+import processes.RunningProcess;
+
 import java.io.*;
 
 /**
@@ -12,7 +15,7 @@ public class ExecuteShellCommandDDOS implements Runnable {
     private long waitTime;
     private long howManyMinutes;
 
-    public String executeCommand(String command) {
+    public void executeCommand(String command) {
         StringBuffer output=null;
         Process p=null;
         try {
@@ -59,10 +62,17 @@ public class ExecuteShellCommandDDOS implements Runnable {
             e.printStackTrace();
         }
         System.out.println(p.isAlive());
+        try {
+            ProcessHandler.killProcess(new RunningProcess(Integer.toString(ProcessHandler.getPid(p)),null));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         p.destroy();
 
 
-        return output.toString();
+        return ;
 
     }
 
