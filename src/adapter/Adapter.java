@@ -5,5 +5,7 @@ public interface Adapter {
 
 	public String getChipset();
 
+
+
 	public String getDriver();
 }

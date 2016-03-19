@@ -6,6 +6,8 @@ public class AccessPoint {
 	private String enc;
 	private String essid;
 
+
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

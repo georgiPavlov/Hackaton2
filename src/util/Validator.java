@@ -9,6 +9,7 @@ public class Validator {
 	public static boolean validateMac(String mac) {
 		return MAC_PATTERN.matcher(mac).find();
 
+
 	}
 
 }

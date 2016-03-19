@@ -9,6 +9,8 @@ public class WifiAdapter implements Adapter{
 		this.mInterface = outInterface;
 		this.mChipset = outChipset;
 		this.mDriver = outDriver;
+
+
 	}
 	
 	public String getInterface() {
